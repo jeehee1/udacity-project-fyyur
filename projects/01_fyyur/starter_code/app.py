@@ -62,7 +62,7 @@ class Artist(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website_link = db.Column(db.String(120))
-    lf_venues = db.Column(db.Boolean(), default=False)
+    seeking_venue = db.Column(db.Boolean(), default=False)
     seeking_description = db.Column(db.String(120))
     show = db.relation('Show', backref='artists', lazy=True)
 
@@ -74,6 +74,7 @@ class Show(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=False)
   artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
+  start_time = db.Column(db.DateTime, nullable=False)
     
 
 #----------------------------------------------------------------------------#
@@ -255,7 +256,7 @@ def create_venue_submission():
       image_link = form.image_link.data,
       website_link = form.website_link.data,
       seeking_talent = form.seeking_talent.data,
-      seeking_description = form.seeking_description.data,
+      seeking_description = form.seeking_description.data
     )
     db.session.add(venue)
     db.session.commit()
@@ -465,9 +466,38 @@ def create_artist_submission():
   # called upon submitting the new artist listing form
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
+  form = ArtistForm(request.form)
+  error = False
+  try:
+    artist = Artist(
+      name = form.name.data,
+      city = form.city.data,
+      state = form.state.data,
+      phone = form.phone.data,
+      genres = form.genres.data,
+      facebook_link = form.facebook_link.data,
+      image_link = form.image_link.data,
+      website_link = form.website_link.data,
+      seeking_venue = form.seeking_venue.data,
+      seeking_description = form.seeking_description.data
+    )
+    db.session.add(artist)
+    db.session.commit()
 
-  # on successful db insert, flash success
-  flash('Artist ' + request.form['name'] + ' was successfully listed!')
+    # on successful db insert, flash success
+    flash('Artist ' + request.form['name'] + ' was successfully listed!')
+
+  except:
+    error = True
+    db.session.rollback()
+    flash('An error occurred. Artist ' + form.name + ' could not be listed.')  
+  
+  finally:
+    db.session.close()
+    
+
+
+
   # TODO: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
   return render_template('pages/home.html')
