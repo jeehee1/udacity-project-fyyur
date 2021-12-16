@@ -14,6 +14,7 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form, form
 from sqlalchemy.sql.sqltypes import ARRAY
+from werkzeug.wrappers import response
 from forms import *
 #----------------------------------------------------------------------------#
 # App Config.
@@ -155,13 +156,12 @@ def search_venues():
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
 
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
+  search_term=request.form.get('search_term', '')
+  venues = Venue.query.filter(Venue.name.ilike("%"+search_term+"%")).all()
+
+  response = {
+    'count' : len(venues),
+    'data' : venues
   }
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
