@@ -171,9 +171,9 @@ def show_venue(venue_id):
   # TODO: replace with real venue data from the venues table, using venue_id
 
   venue = Venue.query.get(venue_id)
-  past_shows = db.session.query(Show, Artist).join(Venue).filter(Show.venue_id == venue_id).filter(Show.artist_id == Artist.id).filter(Show.start_time<datetime.now()).all()
+  past_shows = db.session.query(Show, Artist).filter(Show.venue_id == venue_id).filter(Show.artist_id == Artist.id).filter(Show.start_time<datetime.now()).all()
 
-  upcoming_shows = db.session.query(Show, Artist).join(Venue).filter(Show.venue_id==venue_id).filter(Show.artist_id == Artist.id).filter(Show.start_time>datetime.now()).all()
+  upcoming_shows = db.session.query(Show, Artist).filter(Show.venue_id==venue_id).filter(Show.artist_id == Artist.id).filter(Show.start_time>datetime.now()).all()
 
   date_show = db.session.query()
   print(len(past_shows))
