@@ -220,39 +220,46 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
-  form = VenueForm(request.form)
-  error = False
-  try:
-    venue = Venue()
-    form.populate_obj(venue)
-    # venue = Venue(
-    #   name = form.name.data,
-    #   city = form.city.data,
-    #   state = form.state.data,
-    #   address = form.address.data,
-    #   phone = form.phone.data,
-    #   genres = form.genres.data,
-    #   facebook_link = form.facebook_link.data,
-    #   image_link = form.image_link.data,
-    #   website_link = form.website_link.data,
-    #   seeking_talent = form.seeking_talent.data,
-    #   seeking_description = form.seeking_description.data
-    # )
-    db.session.add(venue)
-    db.session.commit()
+  #set csrf as false to enable for.validate, in a production application CSRF must be activated
+  form = VenueForm(request.form, meta={'crsf':False}) 
+  if form.validate():
+    try:
+      venue = Venue()
+      form.populate_obj(venue)
+      # venue = Venue(
+      #   name = form.name.data,
+      #   city = form.city.data,
+      #   state = form.state.data,
+      #   address = form.address.data,
+      #   phone = form.phone.data,
+      #   genres = form.genres.data,
+      #   facebook_link = form.facebook_link.data,
+      #   image_link = form.image_link.data,
+      #   website_link = form.website_link.data,
+      #   seeking_talent = form.seeking_talent.data,
+      #   seeking_description = form.seeking_description.data
+      # )
+      db.session.add(venue)
+      db.session.commit()
 
-    # on successful db insert, flash success
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
+      # on successful db insert, flash success
+      flash('Venue ' + request.form['name'] + ' was successfully listed!')
 
-  # TODO: modify data to be the data object returned from db insertion
+    # TODO: modify data to be the data object returned from db insertion
 
-  except :
-    db.session.rollback()
-    error=True
-    flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
-  
-  finally:
-    db.session.close()
+    except :
+      db.session.rollback()
+      error=True
+      flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
+    
+    finally:
+      db.session.close()
+    
+  else:
+    message=[]
+    for field, err in form.errors.items():
+      message.append(field+' '+'|'.join(err))
+      flash('Errors ' + str(message))
 
 
   # TODO: on unsuccessful db insert, flash an error instead.
