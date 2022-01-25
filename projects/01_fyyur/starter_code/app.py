@@ -517,17 +517,33 @@ def create_artist_submission():
 def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
+  data = []
+  results = db.session.query(Show, Venue, Artist)\
+    .join(Venue, Show.venue_id==Venue.id)\
+    .join(Artist, Show.artist_id==Artist.id)\
+    .order_by(Show.start_time.desc())\
+    .all()
 
-  fyyur_datas = db.session.query(Show, Venue, Artist).filter(Show.venue_id==Venue.id).filter(Show.artist_id==Artist.id).all()
+  for show, venue, artist in results:
+    data.append({
+      'venue_id' : venue.id,
+      'venue_name' : venue.name,
+      'artist_id' : artist.id,
+      'artist_name' : artist.name,
+      'artist_image_link' : artist.image_link,
+      'start_time' : show.start_time.strftime('%y-%m-%d %H:%S')
+    })
+    
+  # fyyur_datas = db.session.query(Show, Venue, Artist).filter(Show.venue_id==Venue.id).filter(Show.artist_id==Artist.id).all()
 
-  data=[{
-    'venue_id' : venue.id,
-    'venue_name' : venue.name,
-    'artist_id' : artist.id,
-    'artist_name' : artist.name,
-    'artist_image_link' : artist.image_link,
-    'start_time' : show.start_time.strftime('%y-%m-%d %H:%M:%S')
-  }for show, venue, artist in fyyur_datas]
+  # data=[{
+  #   'venue_id' : venue.id,
+  #   'venue_name' : venue.name,
+  #   'artist_id' : artist.id,
+  #   'artist_name' : artist.name,
+  #   'artist_image_link' : artist.image_link,
+  #   'start_time' : show.start_time.strftime('%y-%m-%d %H:%M:%S')
+  # }for show, venue, artist in fyyur_datas]
   
   return render_template('pages/shows.html', shows=data)
 
