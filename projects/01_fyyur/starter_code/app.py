@@ -69,7 +69,7 @@ class Artist(db.Model):
     website_link = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean(), default=False)
     seeking_description = db.Column(db.String(120))
-    show = db.relation('Show', backref='artists', lazy='joined', cascade='all, delete')
+    show = db.relation('Show', backref='artist', lazy='joined', cascade='all, delete')
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -151,38 +151,61 @@ def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
 
-  venue = Venue.query.get(venue_id)
-  past_shows = db.session.query(Show, Artist).filter(Show.venue_id == venue_id).filter(Show.artist_id == Artist.id).filter(Show.start_time<datetime.now()).all()
-  upcoming_shows = db.session.query(Show, Artist).filter(Show.venue_id==venue_id).filter(Show.artist_id == Artist.id).filter(Show.start_time>datetime.now()).all()
+  venue = Venue.query.get_or_404(venue_id)
+  # past_shows = db.session.query(Show, Artist).filter(Show.venue_id == venue_id).filter(Show.artist_id == Artist.id).filter(Show.start_time<datetime.now()).all()
+  # upcoming_shows = db.session.query(Show, Artist).filter(Show.venue_id==venue_id).filter(Show.artist_id == Artist.id).filter(Show.start_time>datetime.now()).all()
+  past_shows = []
+  upcoming_shows = []
 
-  data = {
-    'id' : venue.id,
-    'name' : venue.name,
-    'genres' : venue.genres,
-    'address' : venue.address,
-    'city' : venue.city,
-    'state' : venue.state,
-    'phone' : venue.phone,
-    'website' : venue.website_link,
-    'facebook_link' : venue.facebook_link,
-    'seeking_talent' : venue.seeking_talent,
-    'seeking_description' : venue.seeking_description,
-    'image_link' : venue.image_link,
-    "past_shows": [{
-      "artist_id": artist.id,
-      "artist_name": artist.name,
-      "artist_image_link": artist.image_link,
-      "start_time": show.start_time.strftime('%y-%m-%d %H:%M:%S')
-    }for show, artist in past_shows],
-    "upcoming_shows": [{
-      "artist_id" : artist.id,
-      "artist_name" : artist.name,
-      "artist_image_link" : artist.image_link,
-      "start_time" : show.start_time.strftime('%y-%m-%d %H:%M:%S')
-    }for show, artist in upcoming_shows],
-    "past_shows_count": len(past_shows),
-    "upcoming_shows_count": len(upcoming_shows),
-  }
+  for venue_show in venue.show:
+    temp_show = {
+      'artist_id' : venue_show.artist_id,
+      'artist_name' : venue_show.artist.name,
+      'artist_image_link' : venue_show.artist.image_link,
+      'start_time' : venue_show.start_time.strftime('%y-%m-%d %H-%M')
+    }
+    if venue_show.start_time > datetime.now():
+      upcoming_shows.append(temp_show)
+    else:
+      past_shows.append(temp_show)
+
+  #object class to dic
+  data = vars(venue)
+
+  data['past_shows'] = past_shows
+  data['upcoming_shows'] = upcoming_shows
+  data['past_shows_count'] = len(past_shows)
+  data['upcoming_shows_count'] = len(upcoming_shows)
+    
+
+  # data = {
+  #   'id' : venue.id,
+  #   'name' : venue.name,
+  #   'genres' : venue.genres,
+  #   'address' : venue.address,
+  #   'city' : venue.city,
+  #   'state' : venue.state,
+  #   'phone' : venue.phone,
+  #   'website' : venue.website_link,
+  #   'facebook_link' : venue.facebook_link,
+  #   'seeking_talent' : venue.seeking_talent,
+  #   'seeking_description' : venue.seeking_description,
+  #   'image_link' : venue.image_link,
+  #   "past_shows": [{
+  #     "artist_id": artist.id,
+  #     "artist_name": artist.name,
+  #     "artist_image_link": artist.image_link,
+  #     "start_time": show.start_time.strftime('%y-%m-%d %H:%M:%S')
+  #   }for show, artist in past_shows],
+  #   "upcoming_shows": [{
+  #     "artist_id" : artist.id,
+  #     "artist_name" : artist.name,
+  #     "artist_image_link" : artist.image_link,
+  #     "start_time" : show.start_time.strftime('%y-%m-%d %H:%M:%S')
+  #   }for show, artist in upcoming_shows],
+  #   "past_shows_count": len(past_shows),
+  #   "upcoming_shows_count": len(upcoming_shows),
+  # }
 
   return render_template('pages/show_venue.html', venue=data)
 
