@@ -531,7 +531,7 @@ def shows():
       'artist_id' : artist.id,
       'artist_name' : artist.name,
       'artist_image_link' : artist.image_link,
-      'start_time' : show.start_time.strftime('%y-%m-%d %H:%S')
+      'start_time' : show.start_time.strftime('%y-%m-%d %H:%M')
     })
     
   # fyyur_datas = db.session.query(Show, Venue, Artist).filter(Show.venue_id==Venue.id).filter(Show.artist_id==Artist.id).all()
