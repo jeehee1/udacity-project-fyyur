@@ -15,7 +15,7 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from logging import Formatter, FileHandler
-from flask_wtf import Form, form
+from flask_wtf import FlaskForm as Form
 from sqlalchemy.sql.sqltypes import ARRAY
 from werkzeug.wrappers import response
 from forms import *
