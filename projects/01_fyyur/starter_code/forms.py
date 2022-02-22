@@ -1,7 +1,26 @@
 from datetime import datetime
-from flask_wtf import Form
+from flask_wtf import Form, FlaskForm
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL
+
+class ShowForm(FlaskForm):
+    def __init__(self, formdata=None, **kwargs):
+        super().__init__(formdata, **kwargs)
+
+        if 'venues' in kwargs:
+            self.venue_id.choices = [(venue.id, venue.name) for venue in kwargs['venues']]
+        if 'artists' in kwargs:
+            self.artist_id.choices = [(artist.id, artist.name) for artist in kwargs['artists']]
+
+artist_id = SelectField(
+    'artist_id',
+    validators=[DataRequired()]
+)
+venue_id = SelectField(
+    'venue_id',
+    validators=[DataRequired()]
+)
+
 
 class ShowForm(Form):
     artist_id = StringField(
