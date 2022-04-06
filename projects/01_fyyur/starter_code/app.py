@@ -152,9 +152,9 @@ def create_venue_submission():
 
     # TODO: modify data to be the data object returned from db insertion
 
-    except :
+    except ValueError as e:
+      print(e)
       db.session.rollback()
-      error=True
       flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
     
     finally:
@@ -182,7 +182,8 @@ def delete_venue(venue_id):
       
     db.session.commit()
     flash(venue.name+' is succefully deleted')
-  except:
+  except ValueError as e:
+    print(e)
     db.session.rollback()
     flash('Error is occured.'+venue.name+'could not be deleted.')
   finally:
@@ -288,7 +289,8 @@ def edit_artist_submission(artist_id):
     db.session.commit()
     flash(artist.name + ' is succefully edited!')
 
-  except:
+  except ValueError as e:
+    print(e)
     db.session.rollback()
     flash('edit failed. Please try again.')
 
@@ -326,7 +328,8 @@ def edit_venue_submission(venue_id):
     venue.seeking_description = form.seeking_description.data
     
     db.session.commit()
-  except:
+  except ValueError as e:
+    print(e)
     db.session.rollback()
   finally:
     db.session.close()
@@ -357,10 +360,10 @@ def create_artist_submission():
       # on successful db insert, flash success
       flash('Artist ' + request.form['name'] + ' was successfully listed!')
 
-    except:
-      error = True
+    except ValueError as e:
+      print(e)
       db.session.rollback()
-      flash('An error occurred. Artist ' + form.name + ' could not be listed.')  
+      flash('An error occurred. Artist ' + form.name + ' could not be listed.')
     
     finally:
       db.session.close()
@@ -414,9 +417,6 @@ def create_shows():
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
   # TODO: insert form data as a new Show record in the db, instead
-  
-  # form = ShowForm(request.form)
-  # error = False
 
   try:
     venues = Venue.query.all()
@@ -431,9 +431,9 @@ def create_show_submission():
     # on successful db insert, flash success
     flash('Show was successfully listed!')
 
-  except:
+  except ValueError as e:
+    print(e)
     db.session.rollback()
-    error = True
     flash('An error occurred. Show could not be listed')
 
   finally:
