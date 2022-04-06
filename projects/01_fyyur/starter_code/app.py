@@ -124,36 +124,6 @@ def show_venue(venue_id):
   data['upcoming_shows'] = upcoming_shows
   data['past_shows_count'] = len(past_shows)
   data['upcoming_shows_count'] = len(upcoming_shows)
-    
-
-  # data = {
-  #   'id' : venue.id,
-  #   'name' : venue.name,
-  #   'genres' : venue.genres,
-  #   'address' : venue.address,
-  #   'city' : venue.city,
-  #   'state' : venue.state,
-  #   'phone' : venue.phone,
-  #   'website' : venue.website_link,
-  #   'facebook_link' : venue.facebook_link,
-  #   'seeking_talent' : venue.seeking_talent,
-  #   'seeking_description' : venue.seeking_description,
-  #   'image_link' : venue.image_link,
-  #   "past_shows": [{
-  #     "artist_id": artist.id,
-  #     "artist_name": artist.name,
-  #     "artist_image_link": artist.image_link,
-  #     "start_time": show.start_time.strftime('%y-%m-%d %H:%M:%S')
-  #   }for show, artist in past_shows],
-  #   "upcoming_shows": [{
-  #     "artist_id" : artist.id,
-  #     "artist_name" : artist.name,
-  #     "artist_image_link" : artist.image_link,
-  #     "start_time" : show.start_time.strftime('%y-%m-%d %H:%M:%S')
-  #   }for show, artist in upcoming_shows],
-  #   "past_shows_count": len(past_shows),
-  #   "upcoming_shows_count": len(upcoming_shows),
-  # }
 
   return render_template('pages/show_venue.html', venue=data)
 
@@ -174,19 +144,6 @@ def create_venue_submission():
     try:
       venue = Venue()
       form.populate_obj(venue)
-      # venue = Venue(
-      #   name = form.name.data,
-      #   city = form.city.data,
-      #   state = form.state.data,
-      #   address = form.address.data,
-      #   phone = form.phone.data,
-      #   genres = form.genres.data,
-      #   facebook_link = form.facebook_link.data,
-      #   image_link = form.image_link.data,
-      #   website_link = form.website_link.data,
-      #   seeking_talent = form.seeking_talent.data,
-      #   seeking_description = form.seeking_description.data
-      # )
       db.session.add(venue)
       db.session.commit()
 
@@ -295,33 +252,6 @@ def show_artist(artist_id):
   data['upcoming_shows'] = upcoming_shows
   data['past_shows_count'] = len(past_shows)
   data['upcoming_shows_count'] = len(upcoming_shows)
-  # data = {
-  #   'id' : artist.id,
-  #   'name' : artist.name,
-  #   'genres' : artist.genres,
-  #   'city' : artist.city,
-  #   'state' : artist.state,
-  #   'phone' : artist.phone,
-  #   'website' : artist.website_link,
-  #   'facebook_link' : artist.facebook_link,
-  #   'seeking_venue' : artist.seeking_venue,
-  #   'seeking_description' : artist.seeking_description,
-  #   'image_link' : artist.image_link,
-  #   'past_shows' : [{
-  #     'venue_id' : venue.id,
-  #     'venue_name' : venue.name,
-  #     'venue_image_link' : venue.image_link,
-  #     'start_time' : show.start_time.strftime('%y-%m-%d %H:%M:%S')
-  #   }for show, venue in past_shows],
-  #   'upcoming_shows' : [{
-  #     'venue_id' : venue.id,
-  #     'venue_name' : venue.name,
-  #     'venue_image_link' : venue.image_link,
-  #     'start_time' : show.start_time.strftime('%y-%m-%d %H:%M:%S')
-  #   }for show, venue in upcoming_shows],
-  #   'past_shows_count' : len(past_shows),
-  #   'upcoming_shows_count' : len(upcoming_shows)
-  # }
   
   return render_template('pages/show_artist.html', artist=data)
 
@@ -421,18 +351,6 @@ def create_artist_submission():
     try:
       artist = Artist()
       form.populate_obj(artist)
-      # artist = Artist(
-      #   name = form.name.data,
-      #   city = form.city.data,
-      #   state = form.state.data,
-      #   phone = form.phone.data,
-      #   genres = form.genres.data,
-      #   facebook_link = form.facebook_link.data,
-      #   image_link = form.image_link.data,
-      #   website_link = form.website_link.data,
-      #   seeking_venue = form.seeking_venue.data,
-      #   seeking_description = form.seeking_description.data,
-      # )
       db.session.add(artist)
       db.session.commit()
 
@@ -481,18 +399,7 @@ def shows():
       'artist_image_link' : artist.image_link,
       'start_time' : show.start_time.strftime('%y-%m-%d %H:%M')
     })
-    
-  # fyyur_datas = db.session.query(Show, Venue, Artist).filter(Show.venue_id==Venue.id).filter(Show.artist_id==Artist.id).all()
 
-  # data=[{
-  #   'venue_id' : venue.id,
-  #   'venue_name' : venue.name,
-  #   'artist_id' : artist.id,
-  #   'artist_name' : artist.name,
-  #   'artist_image_link' : artist.image_link,
-  #   'start_time' : show.start_time.strftime('%y-%m-%d %H:%M:%S')
-  # }for show, venue, artist in fyyur_datas]
-  
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
