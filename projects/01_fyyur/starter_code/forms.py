@@ -1,3 +1,4 @@
+from enums import Genre, State
 from datetime import datetime
 from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
@@ -106,14 +107,14 @@ class ShowForm(Form):
         if 'artists' in kwargs:
             self.artist_id.choices = [(artist.id, artist.name) for artist in kwargs['artists']]
 
-artist_id = SelectField(
-    'artist_id',
-    validators=[DataRequired()]
-)
-venue_id = SelectField(
-    'venue_id',
-    validators=[DataRequired()]
-)
+# artist_id = SelectField(
+#     'artist_id',
+#     validators=[DataRequired()]
+# )
+# venue_id = SelectField(
+#     'venue_id',
+#     validators=[DataRequired()]
+# )
 
 
 class ShowForm(Form):
@@ -138,7 +139,7 @@ class VenueForm(Form):
     )
     state = SelectField(
         'state', validators=[DataRequired()],
-        choices=state_choices
+        choices=State.choices()
     )
     address = StringField(
         'address', validators=[DataRequired()]
@@ -152,7 +153,7 @@ class VenueForm(Form):
     genres = SelectMultipleField(
         # TODO implement enum restriction
         'genres', validators=[DataRequired()],
-        choices=genres_choices
+        choices=Genre.choices()
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
@@ -195,7 +196,7 @@ class ArtistForm(Form):
     )
     state = SelectField(
         'state', validators=[DataRequired()],
-        choices=state_choices
+        choices=State.choices()
     )
     phone = StringField(
         # TODO implement validation logic for state
@@ -206,7 +207,7 @@ class ArtistForm(Form):
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
-        choices=genres_choices
+        choices=Genre.choices()
      )
     facebook_link = StringField(
         # TODO implement enum restriction
@@ -225,13 +226,13 @@ class ArtistForm(Form):
 
     def validate(self):
         """Define a custom validate method in your Form:"""
-        rv = FlaskForm.validate(self)
+        rv = Form.validate(self)
         if not rv:
             return False
         if not is_valid_phone(self.phone.data):
             self.phone.errors.append('Invalid phone.')
             return False
-        if not set(self.genres.data).issubset(dict(genres_choices()).keys()):
+        if not set(self.genres.data).issubset(dict(Genre.choices()).keys()):
             self.genres.errors.append('Invalid genres.')
             return False
         if self.state.data not in dict(State.choices()).keys():
