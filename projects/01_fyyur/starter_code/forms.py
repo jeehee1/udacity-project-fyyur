@@ -32,15 +32,6 @@ class ShowForm(Form):
         if 'artists' in kwargs:
             self.artist_id.choices = [(artist.id, artist.name) for artist in kwargs['artists']]
 
-# artist_id = SelectField(
-#     'artist_id',
-#     validators=[DataRequired()]
-# )
-# venue_id = SelectField(
-#     'venue_id',
-#     validators=[DataRequired()]
-# )
-
 
 class ShowForm(Form):
     artist_id = StringField(
