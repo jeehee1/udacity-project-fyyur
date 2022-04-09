@@ -139,7 +139,7 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   #set csrf as false to enable for.validate, in a production application CSRF must be activated
-  form = VenueForm(request.form, meta={'crsf':False}) 
+  form = VenueForm(request.form, meta={'csrf':False}) 
   if form.validate():
     try:
       venue = Venue()
